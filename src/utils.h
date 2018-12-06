@@ -8,6 +8,8 @@
 #ifndef utils_h
 #define utils_h
 #include <vector>
+#include <iostream>
+#include "config.h"
 
 // For converting back and forth between radians and degrees.
 constexpr double pi() { return M_PI; }
@@ -142,5 +144,39 @@ std::vector<double> getXY(double s, double d, const std::vector<double> &maps_s,
     return {x,y};
     
 }
+/////////////////////////////////////////////////////////////////////////////////////
+bool isSafeToChangeLane(const std::vector< std::vector<double> >& sensor_fusion, const size_t prev_path_size, const int desired_lane, const double ego_s)
+{
+   
+    bool res = true;
+    
+    // check through the sensor fusion
+    for(int i = 0; i < sensor_fusion.size(); ++i)
+    {
+        // d is the lane
+        float d = sensor_fusion[i][6];
+        if(d > (4*desired_lane) && d < (4*desired_lane + 4)) // check whether in the same lane
+        {
+            // naive implementation
+            float vx = sensor_fusion[i][3];
+            float vy = sensor_fusion[i][4];
+            float v = sqrt(vx*vx + vy*vy);
+            double s = sensor_fusion[i][5];
+            
+            // predict the next timestemp's S
+            s += static_cast<double>(prev_path_size * config::T * v); // one path size you will need 0.2s to execute
+            
+            // TODO: The condition should be, the path of other vehicles has no cross point with ego path
+            if(fabs(s - ego_s) < 20)
+            {
+                std::cout<<"[isSafeToChangeLane] id = "<<sensor_fusion[i][0]<< " occupys the lane, CANNOT switch! "<< std::endl;
+                res = false;
+                break;
+            }
+        }
+    }
+    return res;
+}
+
 
 #endif /* utils_h */

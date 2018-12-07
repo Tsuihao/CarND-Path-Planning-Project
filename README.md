@@ -3,7 +3,7 @@ Self-Driving Car Engineer Nanodegree Program
 
 
 **[Youtube](https://youtu.be/gr44YmwvpV4)**
-[![IMAGE ALT TEXT](./images/cover.png)](https://youtu.be/gr44YmwvpV4)
+[![IMAGE ALT TEXT](./images/cover.PNG)](https://youtu.be/gr44YmwvpV4)
 
 ### Introduction
 **Trajectory generation**:
